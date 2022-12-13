@@ -208,12 +208,14 @@ Hasil tersebut memperlihatkan nilai-p dari tiap pasang kucing. Untuk pasang kuci
     geom_boxplot(color = c("#00AFBB", "#E7B800", "#FC4E07")) +
     scale_x_discrete() + xlab("Group") + ylab("Length (cm)")
     ```
-    ![]
+    ![Plot4](Plot4.png)\
 
 ## Nomor 5
 >Data yang digunakan merupakan hasil eksperimen yang dilakukan untuk mengetahui pengaruh suhu operasi (100˚C, 125˚C dan 150˚C) dan tiga jenis kaca pelat muka (A, B dan C) pada keluaran cahaya tabung osiloskop. Percobaan dilakukan sebanyak 27 kali 
 - Buatlah plot sederhana untuk visualisasi data\
-
+    ```R
+    qplot(x = Temp, y = Light, geom = "point", data = GTL) + facet_grid(.~Glass, labeller = label_both)
+    ```
 - Lakukan uji ANOVA dua arah untuk 2 faktor\
     n = 10
     ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212925.png)
