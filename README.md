@@ -216,27 +216,195 @@ Hasil tersebut memperlihatkan nilai-p dari tiap pasang kucing. Untuk pasang kuci
     ```R
     qplot(x = Temp, y = Light, geom = "point", data = GTL) + facet_grid(.~Glass, labeller = label_both)
     ```
+    ![Plot5](Plot5.png)\
 - Lakukan uji ANOVA dua arah untuk 2 faktor\
-    n = 10
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212925.png)
-    n = 100
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212937.png)
-    n = 1000
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212948.png)
-    n = 10000
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20213004.png)
+Pertama, buat variabel untuk menyimpan data glass dan temp
+    ```R
+    GTL$Glass <- as.factor(GTL$Glass)
+    GTL$Temp <- as.factor(GTL$Temp)
+    str(GTL)
+    ```
+Selanjutnya, anova dapat dilakukan dengan menggunakan fungsi aov()
+    ```R
+    anova <- aov(Light ~ Glass*Temp, data = GTL)
+    summary(anova)
+    ```
+Maka, didapat hasil uji anova:
+    ```R
+    > summary(anova)
+                Df  Sum Sq Mean Sq F value   Pr(>F)    
+    Glass        2  150865   75432   206.4 3.89e-13 ***
+    Temp         2 1970335  985167  2695.3  < 2e-16 ***
+    Glass:Temp   4  290552   72638   198.7 1.25e-14 ***
+    Residuals   18    6579     366                     
+    ---
+    Signif. codes:  
+    0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+    ```
 - Tampilkan tabel dengan mean dan standar deviasi keluaran cahaya untuk setiap perlakuan (kombinasi kaca pelat muka dan suhu operasi)\
 Untuk mencari nilai rataan dan varian distribusi exponensial, saya pertama mengenerate data random sebanyak 100 dengan menggunakan fungsi rexp() dan dimasukkan ke dalam variabel set. Setelah itu, rataan dan varian dicari dengan menggunakan fungsi mean(set) dan var(set).
     ```R
-    #a
-    #c
-    set.seed(1)
-    n <- 100
-    set <- rexp(n,lambda)
-    rataan <- mean(set)
-    varian <- var(set)
-    paste("Rataan =", rataan)
-    paste("Varian =", varian)
+    data_summary <- group_by(GTL, Glass, Temp) %>%
+      summarise(mean = mean(Light), sd = sd(Light)) %>%
+      arrange(desc(mean))
+    print(data_summary)
+    ```
+Maka, didapat tabel seperti berikut:
+    ```R
+    # A tibble: 9 × 4
+    # Groups:   Glass [3]
+      Glass Temp   mean    sd
+      <fct> <fct> <dbl> <dbl>
+    1 A     150   1386   6   
+    2 B     150   1313  14.5 
+    3 A     125   1087.  2.52
+    4 C     125   1055. 10.6 
+    5 B     125   1035  35   
+    6 C     150    887. 18.6 
+    7 C     100    573. 26.5 
+    8 A     100    573.  6.43
+    9 B     100    553  24.6
     ```
 - Lakukan uji Tukey\
+Uji Tukey dilakukan dengan fungsi berikut:
+    ```R
+    tukey <- TukeyHSD(anova)
+    print(tukey)
+    ```
+Maka, didapat hasil:
+    ```R
+    > print(tukey)
+      Tukey multiple comparisons of means
+        95% family-wise confidence level
+
+    Fit: aov(formula = Light ~ Glass * Temp, data = GTL)
+
+    $Glass
+              diff        lwr       upr     p adj
+    B-A  -48.33333  -71.33487  -25.3318 0.0001206
+    C-A -177.11111 -200.11265 -154.1096 0.0000000
+    C-B -128.77778 -151.77932 -105.7762 0.0000000
+
+    $Temp
+                diff      lwr      upr p adj
+    125-100 492.6667 469.6651 515.6682     0
+    150-100 628.8889 605.8874 651.8904     0
+    150-125 136.2222 113.2207 159.2238     0
+  
+    $`Glass:Temp`
+                        diff        lwr         upr
+    B:100-A:100  -19.6666667  -74.36273   35.029396
+    C:100-A:100    0.6666667  -54.02940   55.362729
+    A:125-A:100  514.6666667  459.97060  569.362729
+    B:125-A:100  462.3333333  407.63727  517.029396
+    C:125-A:100  482.0000000  427.30394  536.696063
+    A:150-A:100  813.3333333  758.63727  868.029396
+    B:150-A:100  740.3333333  685.63727  795.029396
+    C:150-A:100  314.0000000  259.30394  368.696063
+    C:100-B:100   20.3333333  -34.36273   75.029396
+    A:125-B:100  534.3333333  479.63727  589.029396
+    B:125-B:100  482.0000000  427.30394  536.696063
+    C:125-B:100  501.6666667  446.97060  556.362729
+    A:150-B:100  833.0000000  778.30394  887.696063
+    B:150-B:100  760.0000000  705.30394  814.696063
+    C:150-B:100  333.6666667  278.97060  388.362729
+    A:125-C:100  514.0000000  459.30394  568.696063
+    B:125-C:100  461.6666667  406.97060  516.362729
+    C:125-C:100  481.3333333  426.63727  536.029396
+    A:150-C:100  812.6666667  757.97060  867.362729
+    B:150-C:100  739.6666667  684.97060  794.362729
+    C:150-C:100  313.3333333  258.63727  368.029396
+    B:125-A:125  -52.3333333 -107.02940    2.362729
+    C:125-A:125  -32.6666667  -87.36273   22.029396
+    A:150-A:125  298.6666667  243.97060  353.362729
+    B:150-A:125  225.6666667  170.97060  280.362729
+    C:150-A:125 -200.6666667 -255.36273 -145.970604
+    C:125-B:125   19.6666667  -35.02940   74.362729
+    A:150-B:125  351.0000000  296.30394  405.696063
+    B:150-B:125  278.0000000  223.30394  332.696063
+    C:150-B:125 -148.3333333 -203.02940  -93.637271
+    A:150-C:125  331.3333333  276.63727  386.029396
+    B:150-C:125  258.3333333  203.63727  313.029396
+    C:150-C:125 -168.0000000 -222.69606 -113.303937
+    B:150-A:150  -73.0000000 -127.69606  -18.303937
+    C:150-A:150 -499.3333333 -554.02940 -444.637271
+    C:150-B:150 -426.3333333 -481.02940 -371.637271
+                    p adj
+    B:100-A:100 0.9307049
+    C:100-A:100 1.0000000
+    A:125-A:100 0.0000000
+    B:125-A:100 0.0000000
+    C:125-A:100 0.0000000
+    A:150-A:100 0.0000000
+    B:150-A:100 0.0000000
+    C:150-A:100 0.0000000
+    C:100-B:100 0.9179607
+    A:125-B:100 0.0000000
+    B:125-B:100 0.0000000
+    C:125-B:100 0.0000000
+    A:150-B:100 0.0000000
+    B:150-B:100 0.0000000
+    C:150-B:100 0.0000000
+    A:125-C:100 0.0000000
+    B:125-C:100 0.0000000
+    C:125-C:100 0.0000000
+    A:150-C:100 0.0000000
+    B:150-C:100 0.0000000
+    C:150-C:100 0.0000000
+    B:125-A:125 0.0670029
+    C:125-A:125 0.5065610
+    A:150-A:125 0.0000000
+    B:150-A:125 0.0000000
+    C:150-A:125 0.0000000
+    C:125-B:125 0.9307049
+    A:150-B:125 0.0000000
+    B:150-B:125 0.0000000
+    C:150-B:125 0.0000006
+    A:150-C:125 0.0000000
+    B:150-C:125 0.0000000
+    C:150-C:125 0.0000001
+    B:150-A:150 0.0045830
+    C:150-A:150 0.0000000
+    C:150-B:150 0.0000000
+    ```
 - Gunakan compact letter display untuk menunjukkan perbedaan signifikan antara uji Anova dan uji Tukey\
+Pertama, dibuat compact display dengan fungsi berikut:
+    ```R
+    tukey.cld <- multcompLetters4(anova, tukey)
+    print(tukey.cld)
+    ```
+Sehingga dihasilkan
+    ```R
+    > print(tukey.cld)
+    $Glass
+      A   B   C 
+    "a" "b" "c" 
+
+    $Temp
+    150 125 100 
+    "a" "b" "c" 
+
+    $`Glass:Temp`
+    A:150 B:150 A:125 C:125 B:125 C:150 C:100 A:100 B:100 
+      "a"   "b"   "c"   "c"   "c"   "d"   "e"   "e"   "e" 
+    ```
+Kemudian, cld dimasukkan ke dalam tabel yang telah dibuat pada soal 5c
+    ```R
+    cld <- as.data.frame.list(tukey.cld$`Glass:Temp_Factor`)
+    data_summary$Tukey <- cld$Letters
+    print(data_summary)
+    ```
+    ```R
+    > print(data_summary)
+      Glass Temp      mean        sd
+    1     A  150 1386.0000  6.000000
+    2     B  150 1313.0000 14.525839
+    3     A  125 1087.3333  2.516611
+    4     C  125 1054.6667 10.598742
+    5     B  125 1035.0000 35.000000
+    6     C  150  886.6667 18.610033
+    7     C  100  573.3333 26.539279
+    8     A  100  572.6667  6.429101
+    9     B  100  553.0000 24.637370
+
+    ```
