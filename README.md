@@ -126,17 +126,25 @@ Tidak terdapat cukup bukti untuk menolak H0 dan rata-rata saham di bandung sama 
     Group1 <- subset(Kucing, Group=="oren")
     Group2 <- subset(Kucing, Group=="hitam")
     Group3 <- subset(Kucing, Group=="putih")
-    qqnorm(Group2$Length)
-    qqline(Group2$Length)
-    qqnorm(Group3$Length)
-    qqline(Group3$Length)
     ```
     \Group1
     ```R
     qqnorm(Group1$Length)
     qqline(Group1$Length)
     ```
-    ![Plot1]
+    ![Plot1](Plot1.png)
+    \Group2
+    ```R
+    qqnorm(Group2$Length)
+    qqline(Group2$Length)
+    ```
+    ![Plot2](Plot2.png)
+    \Group 3
+    ```R
+    qqnorm(Group3$Length)
+    qqline(Group3$Length)
+    ```
+    ![Plot3](Plot3.png)
 - carilah atau periksalah Homogeneity of variances nya , Berapa nilai p yang didapatkan? , Apa hipotesis dan kesimpulan yang dapat diambil ?\
     ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212903.png)
 - Untuk uji ANOVA, buatlah model linier dengan Panjang versus Grup dan beri nama model tersebut model 1.\
