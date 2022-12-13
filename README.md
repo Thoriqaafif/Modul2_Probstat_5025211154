@@ -95,7 +95,11 @@ Maka, didapat sampel statistik
 
     ```
 - Lakukan Uji Statistik (df =2)\
-
+Uji statistik dengan derajat kebebasan 2 dapat dilakukan dengan fungsi
+    ```R
+    plotDist(dist = 't', df = 2, col = 'Red')
+    ```
+    ![Plot6](Plot6.png)\
 - Nilai Kritikal\
 Uji hipotesis bersifat two tail sehingga digunakan siginificance level 𝛼/2 = 0.025
     ```R
