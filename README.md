@@ -127,31 +127,88 @@ Tidak terdapat cukup bukti untuk menolak H0 dan rata-rata saham di bandung sama 
     Group2 <- subset(Kucing, Group=="hitam")
     Group3 <- subset(Kucing, Group=="putih")
     ```
-    \Group1
+    Group1
     ```R
     qqnorm(Group1$Length)
     qqline(Group1$Length)
     ```
-    ![Plot1](Plot1.png)
-    \Group2
+    ![Plot1](Plot1.png)\
+    Group2
     ```R
     qqnorm(Group2$Length)
     qqline(Group2$Length)
     ```
-    ![Plot2](Plot2.png)
-    \Group 3
+    ![Plot2](Plot2.png)\
+    Group 3
     ```R
     qqnorm(Group3$Length)
     qqline(Group3$Length)
     ```
     ![Plot3](Plot3.png)
 - carilah atau periksalah Homogeneity of variances nya , Berapa nilai p yang didapatkan? , Apa hipotesis dan kesimpulan yang dapat diambil ?\
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212903.png)
-- Untuk uji ANOVA, buatlah model linier dengan Panjang versus Grup dan beri nama model tersebut model 1.\
-- Dari Hasil Poin C , Berapakah nilai-p ? ,  Apa yang dapat Anda simpulkan dari H0?\
-- Verifikasilah jawaban model 1 dengan Post-hooc test TukeyHSD ,  dari nilai p yang didapatkan apakah satu jenis kucing lebih panjang dari yang lain? Jelaskan.\
-- Visualisasikan data dengan ggplot2\
+Homogenity of variances dapat dicari menggunakan fungsi bartlett.test() seperti:
+    ```R
+    bartlett.test(Length~Group, data = Kucing)
+    ```
+    Menghasilkan P value:
+    
+    ```R
+    > bartlett.test(Length~Group, data = Kucing)
 
+		Bartlett test of homogeneity of variances
+
+	data:  Length by Group
+	Bartlett's K-squared = 0.43292, df = 2, p-value =
+	0.8054
+    ```
+    
+- Untuk uji ANOVA, buatlah model linier dengan Panjang versus Grup dan beri nama model tersebut model 1.\
+    ```R
+    model1 = lm(Length~Group, data = Kucing)
+    anova(model1)
+    ```
+    Menghasilkan model linier:
+    ```R
+    > model1 = lm(Length~Group, data = Kucing)
+    > anova(model1)
+    Analysis of Variance Table
+
+    Response: Length
+               Df Sum Sq Mean Sq F value Pr(>F)   
+    Group       2 10.615  5.3074  7.0982 0.0013 **
+    Residuals 102 76.267  0.7477                  
+    ---
+    Signif. codes:  
+    0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+    ```
+- Dari Hasil Poin C , Berapakah nilai-p ? ,  Apa yang dapat Anda simpulkan dari H0?\
+Nilai-p adalah 0,0013 (<0,05) sehingga dapat disimpulkan bahwa setidaknya terdapat 1 pasang populasi yang memiliki rata-rata panjang berbeda.
+- Verifikasilah jawaban model 1 dengan Post-hooc test TukeyHSD ,  dari nilai p yang didapatkan apakah satu jenis kucing lebih panjang dari yang lain? Jelaskan.\
+    ```R
+    TukeyHSD(aov(model1))
+    ```
+    Menghasilkan:
+    ```R
+    > TukeyHSD(aov(model1))
+      Tukey multiple comparisons of means
+        95% family-wise confidence level
+
+    Fit: aov(formula = model1)
+
+    $Group
+                      diff        lwr        upr     p adj
+    hitam-oren  -0.7200000 -1.2116284 -0.2283716 0.0020955
+    putih-oren  -0.1028571 -0.5944855  0.3887713 0.8726158
+    putih-hitam  0.6171429  0.1255145  1.1087713 0.0098353
+    ```
+Hasil tersebut memperlihatkan nilai-p dari tiap pasang kucing. Untuk pasang kucing dengan p<0,05 memiliki rata-rata panjang berbeda sendang p>=0,05 memiliki rata-rata panjang sama. Dari tabel di atas dapat disimpulkan pasang kucing dengan rata-rata panjang sama adalah kucing putih dan oren.
+- Visualisasikan data dengan ggplot2\
+    ```R
+    ggplot(Kucing, aes(x = Group, y = Length)) +
+    geom_boxplot(color = c("#00AFBB", "#E7B800", "#FC4E07")) +
+    scale_x_discrete() + xlab("Group") + ylab("Length (cm)")
+    ```
+    ![]
 
 ## Nomor 5
 >Data yang digunakan merupakan hasil eksperimen yang dilakukan untuk mengetahui pengaruh suhu operasi (100˚C, 125˚C dan 150˚C) dan tiga jenis kaca pelat muka (A, B dan C) pada keluaran cahaya tabung osiloskop. Percobaan dilakukan sebanyak 27 kali 
