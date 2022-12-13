@@ -394,6 +394,7 @@ Kemudian, cld dimasukkan ke dalam tabel yang telah dibuat pada soal 5c
     data_summary$Tukey <- cld$Letters
     print(data_summary)
     ```
+Maka, didapat tabel
     ```R
     > print(data_summary)
       Glass Temp      mean        sd
