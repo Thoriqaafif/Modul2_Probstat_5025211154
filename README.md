@@ -19,61 +19,121 @@ Pertama, saya menggunakan variabel x dan y untuk menyimpan semua data kadar satu
     [1] 6.359595
     '''
 - carilah nilai t (p-value)\
-Untuk mencari mean distribusi geometrik, saya pertama menggunakan rgeom() untuk mengenerate data variabel random distribusi geometrik dan memasukkannya ke dalam variabel x. Nilai mean kemudian didapatkan dengan menggunakan fungsi mean() dengan parameter x==3. Fungsi tersebut akan mengkalkulasi peluang munculnya x=3 dalam 10000 data random tersebut. Untuk lebih jelasnya, berikut kode yang saya gunakan:
+Nilai t bisa didapatkan dengan menggunakan fungsi t.test. Karena uji hipotesis yang dilakukan bersifat two tail dan menggunakan 2 populasi berpasangan, maka saya menggunakan alternative = two.sided dan paired=TRUE seperti berikut:
     ```R
-    #b
-    set.seed(10000)
-    x <- rgeom(10000, p)
-    mean <- (mean(x==3))
-    paste("Mean =", mean)
+    t.test(y,x,alternative="two.sided",paired=TRUE)$p.value
     ```
-    Dengan langkah tersebut, didapatkan output "Mean = 0.1023"
+    Dengan langkah tersebut, didapatkan Nilai t:
+    ```R
+    > t.test(y,x,alternative="two.sided",paired=TRUE)$p.value
+    [1] 6.003179e-05
+    ```
 - tentukanlah apakah terdapat pengaruh yang signifikan secara statistika dalam hal kadar saturasi oksigen , sebelum dan sesudah melakukan aktivitas 𝐴 jika diketahui tingkat signifikansi 𝛼 = 5% serta H0 : “tidak ada pengaruh yang signifikan secara statistika dalam hal kadar saturasi oksigen , sebelum dan sesudah melakukan aktivitas 𝐴”\
-Hasil pada poin a dengan b memiliki kemiripan hingga 3 angka di belakang koma. Hal ini menunjukkan bahwa peluang teoritis, dengan menggunakan pdf, dapat mencerminkan peluang eksperimental yang diambil dengan data random (terutama jika volume data besar).
+Karena p-value yang didapat (0,00006003179) lebih kecil dari nilai siginifikansi, maka H0 ditolak. Oleh karena itu dapat dikatakan bahwa terdapat pengaruh signifikan secara statistik dalam hal kadar saturasi oksigen.
 
 ## Nomor 2
 >Diketahui bahwa mobil dikemudikan rata-rata lebih dari 20.000 kilometer per tahun. Untuk menguji klaim ini, 100 pemilik mobil yang dipilih secara acak diminta untuk mencatat jarak yang mereka tempuh. Jika sampel acak menunjukkan rata-rata 23.500 kilometer dan standar deviasi 3900 kilometer.
 - Apakah Anda setuju dengan klaim tersebut?\
 Ya, saya setuju
 - Jelaskan maksud dari output yang dihasilkan! \
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212825.png)
-- Buatlah kesimpulan berdasarkan P-Value yang dihasilkan!\
-Nilai rataan dan varian dari distribusi binomial didapat dengan rumus n*p dan n*p*q. Maka, kedua nilai tersebut dapat dicari dengan kode berikut:
     ```R
-    #c
-    rataan <- n*p
-    varian <- n*p*q
-    paste("Rataan =", rataan)
-    paste("Varian =", varian)
+    miu <- 20000
+    x <- 23500
+    s <- 3900
+    n <- 100
+    library(BSDA)
+    tsum.test(mean.x=x,s.x=s,n.x=n,mu=miu,alternative = "greater")
+    qnorm(p=0.05,mean=0,sd=1,lower.tail = FALSE)
     ```
-    Didapatkan hasil Rataan = 4 dan varian = 3,2.
+    Code tersebut menghasilkan output:
+    ```R
+    > tsum.test(mean.x=x,s.x=s,n.x=n,mu=miu,alternative = "greater")
+
+    	One-sample t-Test
+    
+    data:  Summarized x
+    t = 8.9744, df = 99, p-value = 9.437e-15
+    alternative hypothesis: true mean is greater than 20000
+    95 percent confidence interval:
+     22852.45       NA
+    sample estimates:
+    mean of x 
+        23500
+    > qnorm(p=0.05,mean=0,sd=1,lower.tail = FALSE)
+    [1] 1.644854
+    ```
+Output tersebut menunjukkan bahwa nilai statistik uji t = 8,9744 dan p-value = 9.437e-15. Selain itu, didapatkan pula nilai kritis sebesar 1,644854 yang berarti bahwa H0 ditolak jika uji statistik t>1,644854 dan diterima jika t<=1,644854.
+- Buatlah kesimpulan berdasarkan P-Value yang dihasilkan!\
+Pada output, dapat dilihat bahwa p-value yang dihasilkan berada di bawah siginificance level 𝛼=0.05 sehingga dapat diputuskan bahwa H0 ditolak. Dengan begitu, dapat disimpulkan bahwa mobil dikemudikan rata-rata lebih dari 20.000 kilometer per tahun.
 
 ## Nomor 3
 >Diketahui perusahaan memiliki seorang data analyst ingin memecahkan permasalahan pengambilan keputusan dalam perusahaan tersebut. Selanjutnya didapatkanlah data berikut dari perusahaan saham tersebut.\
 ![table2](Tabel2.png)\
 >Dari data diatas berilah keputusan serta kesimpulan yang didapatkan dari hasil diatas. Asumsikan nilai variancenya sama, apakah ada perbedaan pada rata-ratanya (α= 0.05)? Buatlah :
 - H0 dan H1\
-
+H0 : μ Bandung - μ Bali = 0\
+H1 : μ Bandung - μ Bali ≠ 0
 - Hitung Sampel Statistik\
-    ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212846.png)
-- Lakukan Uji Statistik (df =2)\
-Poin a menunjukkan peluang lahirnya 6 bayi dalam sehari sedangkan poin b menunjukkan histogram frekuensi hari di mana bayi lahir sebanyak x. Jika dilihat, histogram menunjukkan bahwa kelahiran 6 bayi terjadi sekitar 20 kali. Dengan n=365, maka kelahiran 6 bayi sebesar 0,05479. Nilai tersebut agak jauh dari poin a, namun terdapat pengaruh jumlah data juga yang hanya 365 hari.
-- Nilai Kritikal\
-Pada distribusi poisson, rataan dan varian memiliki nilai yang sama dengan lambda sehingga saya hanya perlu memasukkan nilai lambda ke dalam variabel rataan dan varian seperti kode di bawah ini.
+Uji hipotesis miu pada 2 populasi dengan varian tidak diketahui menggunakan uji statistik t. Sehingga sampel statistik dapat dihitung menggunakan fungsi tsum.test
     ```R
-    #d
-    rataan <- lambda
-    varian <- lambda
-    paste("Rataan =", rataan)
-    paste("Varian =", varian)
+    tsum.test(mean.x=3.64,s.x=1.67,n.x=19,mean.y=2.79,s.y=1.32,n.y=27,alternative="two.sided",var.equal=TRUE,conf.level = 0.95)
+    ```
+Maka, didapat sampel statistik
+    ```R
+    > tsum.test(mean.x=3.64,s.x=1.67,n.x=19,mean.y=2.79,s.y=1.32,n.y=27,alternative="two.sided",var.equal=TRUE,conf.level = 0.95)
+
+	    Standard Two-Sample t-Test
+
+    data:  Summarized x and y
+    t = 1.9267, df = 44, p-value = 0.06049
+    alternative hypothesis: true difference in means is not equal to 0
+    95 percent confidence interval:
+     -0.03911054  1.73911054
+    sample estimates:
+    mean of x mean of y 
+         3.64      2.79
+
+    ```
+- Lakukan Uji Statistik (df =2)\
+
+- Nilai Kritikal\
+Uji hipotesis bersifat two tail sehingga digunakan siginificance level 𝛼/2 = 0.025
+    ```R
+    qt(p=0.025,df=44,lower.tail = TRUE)
+    qt(p=0.025,df=44,lower.tail = FALSE)
+    ```
+Maka, didapat nilai kritikal
+    ```R
+    > qt(p=0.025,df=44,lower.tail = TRUE)
+    [1] -2.015368
+    > qt(p=0.025,df=44,lower.tail = FALSE)
+    [1] 2.015368
     ```
 - Keputusan\
+Nilai statistik uji t berada di antara dua nilai kritikal sehingga H0 diterima.
 - Kesimpulan\
+Tidak terdapat cukup bukti untuk menolak H0 dan rata-rata saham di bandung sama dengan rata-rata saham di bali.
 
 ## Nomor 4
 >Seorang Peneliti sedang meneliti spesies dari kucing di ITS . Dalam penelitiannya ia mengumpulkan data  tiga spesies kucing yaitu kucing oren, kucing hitam dan kucing putih dengan panjangnya masing-masing.\H0 : Tidak ada perbedaan panjang antara ketiga spesies atau rata-rata panjangnya sama
 - Buatlah masing masing jenis spesies menjadi  3 subjek "Grup" (grup 1,grup 2,grup 3). Lalu Gambarkan plot kuantil normal untuk setiap kelompok dan lihat apakah ada outlier utama dalam homogenitas varians.\
+    ```R
+    Kucing <- read.table("D:\\DataKucing.txt",header=TRUE)
 
+    Kucing$Group <- as.factor(Kucing$Group)
+    Kucing$Group <- factor(Kucing$Group, labels=c("oren","hitam","putih"))
+
+    Group1 <- subset(Kucing, Group=="oren")
+    Group2 <- subset(Kucing, Group=="hitam")
+    Group3 <- subset(Kucing, Group=="putih")
+
+    qqnorm(Group1$Length)
+    qqline(Group1$Length)
+    qqnorm(Group2$Length)
+    qqline(Group2$Length)
+    qqnorm(Group3$Length)
+    qqline(Group3$Length)
+    ```
 - carilah atau periksalah Homogeneity of variances nya , Berapa nilai p yang didapatkan? , Apa hipotesis dan kesimpulan yang dapat diambil ?\
     ![1b](https://github.com/Thoriqaafif/picture/blob/main/Screenshot%202022-10-12%20212903.png)
 - Untuk uji ANOVA, buatlah model linier dengan Panjang versus Grup dan beri nama model tersebut model 1.\
