@@ -249,7 +249,7 @@ Untuk mencari nilai rataan dan varian distribusi exponensial, saya pertama menge
       arrange(desc(mean))
     print(data_summary)
     ```
-Maka, didapat tabel seperti berikut:
+Maka, didapat tabel seperti berikut:\
     ```R
     # A tibble: 9 × 4
     # Groups:   Glass [3]
@@ -266,12 +266,12 @@ Maka, didapat tabel seperti berikut:
     9 B     100    553  24.6
     ```
 - Lakukan uji Tukey\
-Uji Tukey dilakukan dengan fungsi berikut:
+Uji Tukey dilakukan dengan fungsi berikut:\
     ```R
     tukey <- TukeyHSD(anova)
     print(tukey)
     ```
-Maka, didapat hasil:
+Maka, didapat hasil:\
     ```R
     > print(tukey)
       Tukey multiple comparisons of means
@@ -373,7 +373,7 @@ Pertama, dibuat compact display dengan fungsi berikut:
     tukey.cld <- multcompLetters4(anova, tukey)
     print(tukey.cld)
     ```
-Sehingga dihasilkan
+Sehingga dihasilkan\
     ```R
     > print(tukey.cld)
     $Glass
@@ -388,13 +388,13 @@ Sehingga dihasilkan
     A:150 B:150 A:125 C:125 B:125 C:150 C:100 A:100 B:100 
       "a"   "b"   "c"   "c"   "c"   "d"   "e"   "e"   "e" 
     ```
-Kemudian, cld dimasukkan ke dalam tabel yang telah dibuat pada soal 5c
+Kemudian, cld dimasukkan ke dalam tabel yang telah dibuat pada soal 5c\
     ```R
     cld <- as.data.frame.list(tukey.cld$`Glass:Temp_Factor`)
     data_summary$Tukey <- cld$Letters
     print(data_summary)
     ```
-Maka, didapat tabel
+Maka, didapat tabel\
     ```R
     > print(data_summary)
       Glass Temp      mean        sd
@@ -407,5 +407,4 @@ Maka, didapat tabel
     7     C  100  573.3333 26.539279
     8     A  100  572.6667  6.429101
     9     B  100  553.0000 24.637370
-
     ```
